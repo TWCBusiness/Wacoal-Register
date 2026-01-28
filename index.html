@@ -1,33 +1,51 @@
-<script>
-    async function main() {
-        const myLiffId = "2008993053-zdStgsKn"; 
-        const scriptUrl = "https://script.google.com/macros/s/AKfycbx77RW1KsxsCKcZEL21r_O_8Mn6SM-hOVfMaL1bZKG0YbIpCrqve9HNvlAvlwrbZNV4dA/exec";
-        const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdFSkvFQSz7N1bhZsjT1aP4mx8WSc5-jJ-eiz6NuSM4Ev6YkA/viewform";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecting...</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f4f4f4; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #00b900; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <p style="margin-left: 15px;">กำลังนำคุณไปยังฟอร์ม...</p>
 
-        try {
-            await liff.init({ liffId: myLiffId });
+    <script>
+        async function main() {
+            const myLiffId = "2008993053-zdStgsKn"; 
+            const scriptUrl = "https://script.google.com/macros/s/AKfycbx77RW1KsxsCKcZEL21r_O_8Mn6SM-hOVfMaL1bZKG0YbIpCrqve9HNvlAvlwrbZNV4dA/exec";
+            const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdFSkvFQSz7N1bhZsjT1aP4mx8WSc5-jJ-eiz6NuSM4Ev6YkA/viewform";
 
-            if (!liff.isLoggedIn()) {
-                liff.login();
-            } else {
-                const profile = await liff.getProfile();
-                const userId = profile.userId;
+            try {
+                await liff.init({ liffId: myLiffId });
 
-                // 1. ส่งข้อมูลไปบันทึกที่ Google Sheets แบบเบื้องหลัง (Background)
-                // เราใช้ mode: 'no-cors' เพื่อไม่ให้ติดปัญหาเรื่องความปลอดภัยเวลาส่งข้ามโดเมน
-                fetch(`${scriptUrl}?uid=${userId}`, { mode: 'no-cors' });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    const profile = await liff.getProfile();
+                    const userId = profile.userId;
 
-                // 2. รอแวบเดียวแล้วส่ง User ไปที่ Google Form
-                // เรายังคงแนบ ID ไปในฟอร์มด้วยเพื่อให้ข้อมูลในฟอร์มกับใน Sheet ตรงกัน
-                const finalFormUrl = `${googleFormUrl}?entry.806847352=${userId}`;
-                
-                setTimeout(() => {
-                    window.location.replace(finalFormUrl);
-                }, 500); // หน่วงเวลา 0.5 วินาทีเพื่อให้แน่ใจว่า fetch ทำงานทัน
+                    // 1. บันทึกลง Sheet (Background)
+                    fetch(`${scriptUrl}?uid=${userId}`, { mode: 'no-cors' });
+
+                    // 2. ไปยัง Google Form
+                    const finalFormUrl = `${googleFormUrl}?entry.806847352=${userId}`;
+                    
+                    setTimeout(() => {
+                        window.location.replace(finalFormUrl);
+                    }, 800); // เพิ่มเวลาเป็น 0.8 วินาทีเพื่อให้ชัวร์ขึ้น
+                }
+            } catch (err) {
+                console.error(err);
+                alert("LIFF Error: " + err.message);
             }
-        } catch (err) {
-            console.error(err);
         }
-    }
-    main();
-</script>
+        main();
+    </script>
+</body>
+</html>
