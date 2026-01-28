@@ -17,51 +17,38 @@
 
     <script>
         async function main() {
-            // 1. แก้ไข: ใส่ LIFF ID ของคุณที่นี่
+            // --- ตั้งค่าข้อมูลตรงนี้ ---
             const myLiffId = "2008993053-zdStgsKn"; 
-            
-            // 2. แก้ไข: ใส่ URL ของ Google Form (เอาเฉพาะส่วนหน้าจนถึง /viewform)
             const googleFormBaseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdFSkvFQSz7N1bhZsjT1aP4mx8WSc5-jJ-eiz6NuSM4Ev6YkA/viewform";
-            
-            // 3. แก้ไข: ใส่รหัส Entry ID ของช่อง Line ID
             const entryId = "entry.806847352";
-            
-            // เพิ่ม &usp=pp_url และพารามิเตอร์สำหรับการข้ามหน้า (ถ้าจำเป็น)
-            const finalUrl = `${googleFormBaseUrl}?${entryId}=${userId}&usp=pp_url`;
+            // -----------------------
 
-            // ส่ง User ไปยังฟอร์มที่มีการเติมค่าไว้แล้ว
-            window.location.href = finalUrl;
-            
             try {
+                // เริ่มต้น LIFF
                 await liff.init({ liffId: myLiffId });
 
                 if (!liff.isLoggedIn()) {
+                    // ถ้ายังไม่ได้ Login ให้ไปหน้า Login ของ LINE
                     liff.login();
                 } else {
+                    // ถ้า Login แล้ว ให้ดึงข้อมูล Profile
                     const profile = await liff.getProfile();
                     const userId = profile.userId;
 
-                    // สร้าง URL ใหม่พร้อมแนบ User ID ไปในช่องที่กำหนด
-                    const finalUrl = `${googleFormBaseUrl}?${entryId}=${userId}`;
+                    // สร้าง URL สำหรับ Google Form พร้อมแนบ User ID
+                    // เพิ่ม &usp=pp_url เพื่อช่วยเรื่องการ Pre-fill
+                    const finalUrl = `${googleFormBaseUrl}?${entryId}=${userId}&usp=pp_url`;
 
-                    // Redirect ไปยัง Google Form
-                    window.location.href = finalUrl;
+                    // นำทางไปยัง Google Form
+                    window.location.replace(finalUrl);
                 }
             } catch (err) {
                 console.error("LIFF Error:", err);
-                alert("เกิดข้อผิดพลาดในการโหลดข้อมูล LINE");
+                alert("เกิดข้อผิดพลาด: " + err.message);
             }
-            } catch (err) {
-    console.error("LIFF Error:", err);
-    // เพิ่มบรรทัดนี้เพื่อดูว่า Error คืออะไร
-    alert("Error ID: " + err.code + "\nMessage: " + err.message); 
-}
         }
 
         main();
     </script>
 </body>
-
 </html>
-
-
