@@ -25,7 +25,13 @@
             
             // 3. แก้ไข: ใส่รหัส Entry ID ของช่อง Line ID
             const entryId = "entry.806847352";
+            
+            // เพิ่ม &usp=pp_url และพารามิเตอร์สำหรับการข้ามหน้า (ถ้าจำเป็น)
+            const finalUrl = `${googleFormBaseUrl}?${entryId}=${userId}&usp=pp_url`;
 
+            // ส่ง User ไปยังฟอร์มที่มีการเติมค่าไว้แล้ว
+            window.location.href = finalUrl;
+            
             try {
                 await liff.init({ liffId: myLiffId });
 
@@ -50,4 +56,5 @@
         main();
     </script>
 </body>
+
 </html>
