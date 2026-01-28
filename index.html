@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecting to Form...</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f4f4f4; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #00b900; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="loader"></div>
+    <p style="margin-left: 15px;">กำลังนำคุณไปยังฟอร์ม...</p>
+
+    <script>
+        async function main() {
+            // 1. แก้ไข: ใส่ LIFF ID ของคุณที่นี่
+            const myLiffId = "https://liff.line.me/2008993053-zdStgsKn"; 
+            
+            // 2. แก้ไข: ใส่ URL ของ Google Form (เอาเฉพาะส่วนหน้าจนถึง /viewform)
+            const googleFormBaseUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdFSkvFQSz7N1bhZsjT1aP4mx8WSc5-jJ-eiz6NuSM4Ev6YkA/viewform";
+            
+            // 3. แก้ไข: ใส่รหัส Entry ID ของช่อง Line ID
+            const entryId = "entry.806847352";
+
+            try {
+                await liff.init({ liffId: myLiffId });
+
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    const profile = await liff.getProfile();
+                    const userId = profile.userId;
+
+                    // สร้าง URL ใหม่พร้อมแนบ User ID ไปในช่องที่กำหนด
+                    const finalUrl = `${googleFormBaseUrl}?${entryId}=${userId}`;
+
+                    // Redirect ไปยัง Google Form
+                    window.location.href = finalUrl;
+                }
+            } catch (err) {
+                console.error("LIFF Error:", err);
+                alert("เกิดข้อผิดพลาดในการโหลดข้อมูล LINE");
+            }
+        }
+
+        main();
+    </script>
+</body>
+</html>
